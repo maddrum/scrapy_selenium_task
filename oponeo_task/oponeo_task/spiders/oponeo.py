@@ -69,6 +69,7 @@ class OponeoSpider(scrapy.Spider):
         return raw_text
 
     def parse(self, response, **kwargs):
+        # todo Handle result pagination
         # apply XL parameter with altering response
         if self.input_data['extra-load']:
             current_path = os.path.split(__file__)[0]
