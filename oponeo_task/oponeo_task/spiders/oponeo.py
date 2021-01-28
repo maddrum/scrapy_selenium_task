@@ -1,8 +1,10 @@
 import json
 import os
+
 import scrapy
 from bs4 import BeautifulSoup
 from oponeo_task.items import OponeoTaskItem
+from selenium import webdriver
 
 
 class OponeoSpider(scrapy.Spider):
@@ -67,6 +69,17 @@ class OponeoSpider(scrapy.Spider):
         return raw_text
 
     def parse(self, response, **kwargs):
+
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+        desired_capabilities = options.to_capabilities()
+        driver = webdriver.Chrome(
+            desired_capabilities=desired_capabilities)
+        driver.implicitly_wait(10)  # Explicit wait
+        wait = WebDriverWait(driver, 5)
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "card__title")))
+        countries = driver.find_elements_by_class_name("card__title")
+
         sub_info = response.css('.productName > h3 > a')
         yield from response.follow_all(sub_info, self.parse_search_result)
 
