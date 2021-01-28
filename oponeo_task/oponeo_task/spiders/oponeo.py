@@ -1,3 +1,5 @@
+import json
+import os
 import scrapy
 from bs4 import BeautifulSoup
 from oponeo_task.items import OponeoTaskItem
@@ -8,12 +10,22 @@ class OponeoSpider(scrapy.Spider):
     allowed_domains = ['oponeo.pl']
     start_urls = None
 
-    def __init__(self):
+    def __init__(self, category=None, *args, **kwargs):
         super(OponeoSpider).__init__()
+        self.input_data = self.get_input_data()
         self.start_urls = self.generate_link()
 
-    def input_data(self):
-        return ['todo', ]
+    @staticmethod
+    def get_input_data():
+        """Reads data from input_json file"""
+        json_file = '../../input_data.json'
+        if not os.path.isfile(json_file):
+            raise IOError('Input data file "input_data.json" is not found.')
+        with open(json_file) as input_file:
+            input_data = json.load(input_file)
+            input_file.close()
+        print(f'Input data: {input_data}')
+        return input_data
 
     def generate_link(self):
         """ TODO Link generator based on initial parameters"""

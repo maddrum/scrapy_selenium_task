@@ -1,0 +1,13 @@
+{
+  "season": "winter",
+  "makers": [
+    "PIRELLI"
+  ],
+  "width": 225,
+  "height": 50,
+  "diameter": 17,
+  "speed_index": "V",
+  "weight_index": "95",
+  "run-flat": true,
+  "extra_load": false
+}
