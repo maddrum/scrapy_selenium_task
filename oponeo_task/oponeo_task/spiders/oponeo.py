@@ -1,5 +1,6 @@
 import scrapy
 from bs4 import BeautifulSoup
+from oponeo_task.items import OponeoTaskItem
 
 
 class OponeoSpider(scrapy.Spider):
@@ -11,9 +12,12 @@ class OponeoSpider(scrapy.Spider):
         super(OponeoSpider).__init__()
         self.start_urls = self.generate_link()
 
+    def input_data(self):
+        return ['todo', ]
+
     def generate_link(self):
         """ TODO Link generator based on initial parameters"""
-        link = ['https://www.oponeo.pl/wybierz-opony/s=1/letnie/t=1/4x4/r=1/255-40-r18']
+        link = ['https://www.oponeo.pl/wybierz-opony/s=1/letnie/t=1/osobowe/r=1/255-40-r18']
         return link
 
     @staticmethod
@@ -29,3 +33,8 @@ class OponeoSpider(scrapy.Spider):
         tyre_model = self.get_raw_text(str(response.css('.model').get()))
         speed_index = self.get_raw_text(str(response.css('div.data:nth-child(8)').get()))
         load_index = self.get_raw_text(str(response.css('div.data:nth-child(10)').get()))
+        result = OponeoTaskItem()
+        result['tyre_model'] = tyre_model
+        result['speed_index'] = speed_index
+        result['load_index'] = load_index
+        return result
