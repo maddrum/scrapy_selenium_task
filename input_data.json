@@ -9,6 +9,6 @@
   "diameter": 18,
   "speed-index": "V",
   "weight-index": "98",
-  "run-flat": true,
-  "extra-load": false
+  "run-flat": false,
+  "extra-load": true
 }

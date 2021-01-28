@@ -28,17 +28,7 @@ class OponeoSpider(scrapy.Spider):
         return input_data
 
     def generate_link(self):
-        """ TODO Link generator based on initial parameters"""
-
-        # по ред
-        # /s=1/letnie,zimowe,caloroczne/ - сезони
-        # /p=1/bridgestone/ - марки
-        # /r=1/215-55-r17 - размери
-        # /ip=1/t - скоростен индекс
-        # /in=1/94 - товарен индекс
-
-        # o=1/run-flat - рън флат
-        # #&&_wEXDQUOcGNrX1RyTFNTaXhJZHMFATEFFXBja19Mc3RTU29ydFBhcmFtZXRlcgUCMzcFCnBja19UckxTUEYFATAFFXBja19UckxTU29ydERpcmVjdGlvbgUBMgUIcGNrX0lPRlAFAjI1BQlwY2tfVHJMU1IFA-KUggULcGNrX1ByTFNST0YFA-KUggUKcGNrX1RyTFNQVAUBMAUOcGNrX1RyTFNTc25JZHMFATEFB3Bja19DUGcFATEFDnBja19UckxTTGl4SWRzBQMyNDcFDHBja19UckxTU0lkcwUDMjkyBQtwY2tfVHJJT25seQUD4pSkUqOIVcgoOheWHVt_4byWktDVrAM=
+        """ TODO Apply extra load"""
 
         link = 'https://www.oponeo.pl/wybierz-opony/'
         # seasons
@@ -61,20 +51,13 @@ class OponeoSpider(scrapy.Spider):
             link += f'r=1/{self.input_data["width"]}-{self.input_data["height"]}-r{self.input_data["diameter"]}/'
         # speed index
         if self.input_data['speed-index']:
-            link += f'/ip=1/{self.input_data["speed-index"].lower()}'
+            link += f'ip=1/{self.input_data["speed-index"].lower()}/'
         # load index
         if self.input_data['weight-index']:
-            link += f'in=1/{self.input_data["weight-index"]}'
+            link += f'in=1/{self.input_data["weight-index"]}/'
         # run-flat
         if self.input_data['run-flat']:
             link += f'o=1/run-flat/'
-        # extra_load
-        if self.input_data['extra-load']:
-            link += '#&&_wEXDQUOcGNrX1RyTFNTaXhJZHMFATEFFXBja19Mc3RTU29ydFBhcmFtZXRlcgUCMzcFCnBja19UckxTUEYFATAFFXBja' \
-                    '19UckxTU29ydERpcmVjdGlvbgUBMgUIcGNrX0lPRlAFAjI1BQlwY2tfVHJMU1IFAKUggULcGNrX1ByTFNST0YFAKU' \
-                    'ggUKcGNrX1RyTFNQVAUBMAUOcGNrX1RyTFNTc25JZHMFATEFB3Bja19DUGcFATEFDnBja19UckxTTGl4SWRz' \
-                    'BQMyNDcFDHBja19UckxTU0lkcwUDMjkyBQtwY2tfVHJJT25seQUD4pSkUqOIVcgoOheWHVt_4byWktDVrAM='
-
         print(f'Scraped link: {link}')
         return [link]
 
