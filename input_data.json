@@ -1,13 +1,14 @@
 {
-  "season": "winter",
+  "season": "summer",
   "makers": [
-    "PIRELLI"
+    "PIRELLI",
+    "BRIDGESTONe"
   ],
   "width": 225,
-  "height": 50,
-  "diameter": 17,
-  "speed_index": "V",
-  "weight_index": "95",
+  "height": 55,
+  "diameter": 18,
+  "speed-index": "V",
+  "weight-index": "98",
   "run-flat": true,
-  "extra_load": false
+  "extra-load": false
 }

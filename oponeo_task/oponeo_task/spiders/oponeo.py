@@ -29,8 +29,54 @@ class OponeoSpider(scrapy.Spider):
 
     def generate_link(self):
         """ TODO Link generator based on initial parameters"""
-        link = ['https://www.oponeo.pl/wybierz-opony/s=1/letnie/t=1/osobowe/r=1/255-40-r18']
-        return link
+
+        # по ред
+        # /s=1/letnie,zimowe,caloroczne/ - сезони
+        # /p=1/bridgestone/ - марки
+        # /r=1/215-55-r17 - размери
+        # /ip=1/t - скоростен индекс
+        # /in=1/94 - товарен индекс
+
+        # o=1/run-flat - рън флат
+        # #&&_wEXDQUOcGNrX1RyTFNTaXhJZHMFATEFFXBja19Mc3RTU29ydFBhcmFtZXRlcgUCMzcFCnBja19UckxTUEYFATAFFXBja19UckxTU29ydERpcmVjdGlvbgUBMgUIcGNrX0lPRlAFAjI1BQlwY2tfVHJMU1IFA-KUggULcGNrX1ByTFNST0YFA-KUggUKcGNrX1RyTFNQVAUBMAUOcGNrX1RyTFNTc25JZHMFATEFB3Bja19DUGcFATEFDnBja19UckxTTGl4SWRzBQMyNDcFDHBja19UckxTU0lkcwUDMjkyBQtwY2tfVHJJT25seQUD4pSkUqOIVcgoOheWHVt_4byWktDVrAM=
+
+        link = 'https://www.oponeo.pl/wybierz-opony/'
+        # seasons
+        seasons = {
+            'winter': 'zimowe',
+            'summer': 'letnie',
+            'all-season': 'caloroczne',
+        }
+        if len(self.input_data['season']) != 0:
+            try:
+                link += f's=1/{seasons[self.input_data["season"]]}/'
+            except KeyError:
+                raise KeyError('Not valid options for season found.')
+        # makers
+        if len(self.input_data['makers']) != 0:
+            input_data_makers = ','.join(self.input_data['makers']).lower()
+            link += f'p=1/{input_data_makers}/'
+        # tyre sizes
+        if self.input_data['width'] and self.input_data['height'] and self.input_data['diameter']:
+            link += f'r=1/{self.input_data["width"]}-{self.input_data["height"]}-r{self.input_data["diameter"]}/'
+        # speed index
+        if self.input_data['speed-index']:
+            link += f'/ip=1/{self.input_data["speed-index"].lower()}'
+        # load index
+        if self.input_data['weight-index']:
+            link += f'in=1/{self.input_data["weight-index"]}'
+        # run-flat
+        if self.input_data['run-flat']:
+            link += f'o=1/run-flat/'
+        # extra_load
+        if self.input_data['extra-load']:
+            link += '#&&_wEXDQUOcGNrX1RyTFNTaXhJZHMFATEFFXBja19Mc3RTU29ydFBhcmFtZXRlcgUCMzcFCnBja19UckxTUEYFATAFFXBja' \
+                    '19UckxTU29ydERpcmVjdGlvbgUBMgUIcGNrX0lPRlAFAjI1BQlwY2tfVHJMU1IFAKUggULcGNrX1ByTFNST0YFAKU' \
+                    'ggUKcGNrX1RyTFNQVAUBMAUOcGNrX1RyTFNTc25JZHMFATEFB3Bja19DUGcFATEFDnBja19UckxTTGl4SWRz' \
+                    'BQMyNDcFDHBja19UckxTU0lkcwUDMjkyBQtwY2tfVHJJT25seQUD4pSkUqOIVcgoOheWHVt_4byWktDVrAM='
+
+        print(f'Scraped link: {link}')
+        return [link]
 
     @staticmethod
     def get_raw_text(text):
