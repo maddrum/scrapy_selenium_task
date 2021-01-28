@@ -1,14 +1,13 @@
 {
   "season": "summer",
   "makers": [
-    "PIRELLI",
-    "BRIDGESTONe"
+    "Hankook"
   ],
-  "width": 225,
+  "width": 195,
   "height": 55,
-  "diameter": 18,
-  "speed-index": "V",
-  "weight-index": "98",
+  "diameter": 15,
+  "speed-index": null,
+  "weight-index": null,
   "run-flat": false,
-  "extra-load": true
+  "extra-load": false
 }

@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import scrapy
 from bs4 import BeautifulSoup
@@ -30,8 +31,7 @@ class OponeoSpider(scrapy.Spider):
         return input_data
 
     def generate_link(self):
-        """ TODO Apply extra load"""
-
+        """ This method generates scrape link based on inputs, except for extra load. """
         link = 'https://www.oponeo.pl/wybierz-opony/'
         # seasons
         seasons = {
@@ -60,7 +60,7 @@ class OponeoSpider(scrapy.Spider):
         # run-flat
         if self.input_data['run-flat']:
             link += f'o=1/run-flat/'
-        print(f'Scraped link: {link}')
+        print(f'Base scrape link (without XL parameter): {link}')
         return [link]
 
     @staticmethod
@@ -69,16 +69,20 @@ class OponeoSpider(scrapy.Spider):
         return raw_text
 
     def parse(self, response, **kwargs):
-
-        options = webdriver.ChromeOptions()
-        options.add_argument("headless")
-        desired_capabilities = options.to_capabilities()
-        driver = webdriver.Chrome(
-            desired_capabilities=desired_capabilities)
-        driver.implicitly_wait(10)  # Explicit wait
-        wait = WebDriverWait(driver, 5)
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "card__title")))
-        countries = driver.find_elements_by_class_name("card__title")
+        # apply XL parameter with altering response
+        if self.input_data['extra-load']:
+            current_path = os.path.split(__file__)[0]
+            options = webdriver.ChromeOptions()
+            options.add_argument("headless")
+            desired_capabilities = options.to_capabilities()
+            driver_path = os.path.join(current_path, 'driver', 'chromedriver_v88.exe')
+            driver = webdriver.Chrome(executable_path=driver_path, desired_capabilities=desired_capabilities)
+            driver.get(response.url)
+            reinforced_click = driver.find_element_by_class_name('reinforced')
+            reinforced_click.click()
+            time.sleep(5)
+            response = response.replace(body=driver.page_source)
+            driver.close()
 
         sub_info = response.css('.productName > h3 > a')
         yield from response.follow_all(sub_info, self.parse_search_result)
