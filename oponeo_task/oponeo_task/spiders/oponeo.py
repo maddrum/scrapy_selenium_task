@@ -6,6 +6,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from oponeo_task.items import OponeoTaskItem
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 
 class OponeoSpider(scrapy.Spider):
@@ -69,24 +70,51 @@ class OponeoSpider(scrapy.Spider):
         return raw_text
 
     def parse(self, response, **kwargs):
-        # todo Handle result pagination
+        # initialize selenium webdriver
+        current_path = os.path.split(__file__)[0]
+        driver_path = os.path.join(current_path, 'driver', 'chromedriver_v88.exe')
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+        desired_capabilities = options.to_capabilities()
+        driver = webdriver.Chrome(executable_path=driver_path, desired_capabilities=desired_capabilities)
+        driver.get(response.url)
+        # splash screen remove
+        time.sleep(60)
+        no_button = driver.find_element_by_css_selector('span.button.no')
+        webdriver.ActionChains(driver).move_to_element(no_button).click(no_button).perform()
         # apply XL parameter with altering response
         if self.input_data['extra-load']:
-            current_path = os.path.split(__file__)[0]
-            options = webdriver.ChromeOptions()
-            options.add_argument("headless")
-            desired_capabilities = options.to_capabilities()
-            driver_path = os.path.join(current_path, 'driver', 'chromedriver_v88.exe')
-            driver = webdriver.Chrome(executable_path=driver_path, desired_capabilities=desired_capabilities)
-            driver.get(response.url)
             reinforced_click = driver.find_element_by_class_name('reinforced')
             reinforced_click.click()
             time.sleep(5)
             response = response.replace(body=driver.page_source)
-            driver.close()
-
-        sub_info = response.css('.productName > h3 > a')
-        yield from response.follow_all(sub_info, self.parse_search_result)
+        # run with respect of pagination
+        next_page = 2
+        has_pagination = True
+        while True:
+            # check for pagination
+            pagination = driver.find_element_by_class_name('blPages')
+            try:
+                pagination.find_element_by_tag_name('li')
+            except NoSuchElementException:
+                has_pagination = False
+            sub_info = response.css('.productName > h3 > a::attr("href")')
+            yield from response.follow_all(sub_info, self.parse_search_result)
+            # break if only 1 page of results/no pagination/
+            if not has_pagination:
+                break
+            # click on next page if present
+            next_link_id = f'_ctPgrp_pi{next_page}i'
+            try:
+                next_link = driver.find_element_by_id(next_link_id)
+            except NoSuchElementException:
+                break
+            webdriver.ActionChains(driver).move_to_element(next_link).click(next_link).perform()
+            time.sleep(5)
+            response = response.replace(body=driver.page_source)
+            time.sleep(5)
+            next_page += 1
+        driver.close()
 
     def parse_search_result(self, response):
         scraped_tyre_model = str(response.css('.model').get())

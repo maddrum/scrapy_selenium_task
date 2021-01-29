@@ -1,13 +1,12 @@
 {
   "season": "summer",
   "makers": [
-    "Hankook"
   ],
   "width": 195,
   "height": 55,
   "diameter": 15,
-  "speed-index": "V",
+  "speed-index": null,
   "weight-index": null,
   "run-flat": false,
-  "extra-load": true
+  "extra-load": false
 }
