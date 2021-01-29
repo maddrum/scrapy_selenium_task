@@ -89,9 +89,12 @@ class OponeoSpider(scrapy.Spider):
         yield from response.follow_all(sub_info, self.parse_search_result)
 
     def parse_search_result(self, response):
-        tyre_model = self.get_raw_text(str(response.css('.model').get()))
-        speed_index = self.get_raw_text(str(response.css('div.data:nth-child(8)').get()))
-        load_index = self.get_raw_text(str(response.css('div.data:nth-child(10)').get()))
+        scraped_tyre_model = str(response.css('.model').get())
+        scraped_speed_index = str(response.css('div.data:nth-child(8)').get())
+        scraped_load_index = str(response.css('div.data:nth-child(10)').get())
+        tyre_model = self.get_raw_text(scraped_tyre_model)
+        speed_index = self.get_raw_text(scraped_speed_index)
+        load_index = self.get_raw_text(scraped_load_index)
         result = OponeoTaskItem()
         result['tyre_model'] = tyre_model
         result['speed_index'] = speed_index

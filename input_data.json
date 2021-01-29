@@ -6,8 +6,8 @@
   "width": 195,
   "height": 55,
   "diameter": 15,
-  "speed-index": null,
+  "speed-index": "V",
   "weight-index": null,
   "run-flat": false,
-  "extra-load": false
+  "extra-load": true
 }
