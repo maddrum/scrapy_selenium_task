@@ -31,6 +31,11 @@ class OponeoSpider(scrapy.Spider):
         print(f'Input data: {input_data}')
         return input_data
 
+    @staticmethod
+    def get_raw_text(text):
+        raw_text = BeautifulSoup(text, 'lxml').text
+        return raw_text
+
     def generate_link(self):
         """ This method generates scrape link based on inputs, except for extra load. """
         link = 'https://www.oponeo.pl/wybierz-opony/'
@@ -63,11 +68,6 @@ class OponeoSpider(scrapy.Spider):
             link += f'o=1/run-flat/'
         print(f'Base scrape link (without XL parameter): {link}')
         return [link]
-
-    @staticmethod
-    def get_raw_text(text):
-        raw_text = BeautifulSoup(text, 'lxml').text
-        return raw_text
 
     def parse(self, response, **kwargs):
         # initialize selenium webdriver
